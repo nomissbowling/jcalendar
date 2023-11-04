@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/jcalendar/0.1.0")]
+#![doc(html_root_url = "https://docs.rs/jcalendar/0.1.1")]
 //! Japanese Calendar for Rust
 //!
 
@@ -18,12 +18,16 @@ mod tests {
       (0xF0, 0xC0, 0x20), // 土
       (0xC0, 0x00, 0x00), // 日
       (0x00, 0xFF, 0x00)]).unwrap(); // 祝
-    cal.show_mat(Term::new().unwrap(), 11).unwrap();
+    cal.show_mat(Term::new().unwrap(), 11, true).unwrap();
     cal.show_list(Term::new().unwrap()).unwrap();
     cal.show_mat(Term{
       s: Date::parse("2023-10-29").expect("s"),
       e: Date::from_ymd(2023, 12, 2).expect("e")
-    }, 11).unwrap();
+    }, 11, true).unwrap();
+    cal.show_mat(Term{
+      s: Date::parse("2023-10-29").expect("s"),
+      e: Date::from_ymd(2023, 12, 2).expect("e")
+    }, 11, false).unwrap();
     assert_eq!(true, true);
   }
 }

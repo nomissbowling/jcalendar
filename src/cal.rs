@@ -90,27 +90,34 @@ impl Cal {
   }
 
   /// show_mat
-  pub fn show_mat(&self, term: Term, cs: i32) -> Result<(), Box<dyn Error>> {
+  pub fn show_mat(&self, term: Term, cs: i32, fm: bool)
+    -> Result<(), Box<dyn Error>> {
     let vd = Calendar::new(term.s, term.e).expect("error Calendar").make();
-    jprint_colored!(self.cols[0], 7, "{}-{:02}\n",
-      vd[0].year(), vd[0].month())?;
-    for &n in &self.wn { jputc_colored(n, -cs, self.col_tbl[&n])?; }
-    jprint!(0, "\n")?;
+    let eot = if let Some(e) = vd.last() { e } else { &vd[0] }; // end of term
+    let mut eom = eot.clone(); // end of month (set later when first)
     let mut first = true;
-    for ref d in &vd { // &Vec<Koyomi::Date>
+    for d in &vd { // &Vec<Koyomi::Date>
       let (w, c, s) = regular(cs - 3, &self.col_tbl, holiday_week_name(d));
-      if first { first = false; for _ in 0..w { jput_pad(true, cs, 0)?; } }
+      if first {
+        first = false;
+        let (y, m) = (d.year(), d.month());
+        eom = Date::from_ymd(y, m, num_days(y, m)).expect("eom");
+        jprint_colored!(self.cols[0], 7, "{}-{:02}\n", y, m)?;
+        for &n in &self.wn { jputc_colored(n, -cs, self.col_tbl[&n])?; }
+        jprint!(0, "\n")?;
+        for _ in 0..w { jput_pad(true, cs, 0)?; }
+      }
       jputs_colored(&format!("{:02}{}", d.day(), s).color(c), -cs)?;
-      if w == 6 { jprint!(0, "\n")?; }
+      if w == 6 || d == eot || (fm && *d == eom) { jprint!(0, "\n")?; }
+      if fm && *d == eom { first = true; }
     }
-    jprint!(0, "\n")?;
     Ok(())
   }
 
   /// show_list
   pub fn show_list(&self, term: Term) -> Result<(), Box<dyn Error>> {
     let vd = Calendar::new(term.s, term.e).expect("error Calendar").make();
-    for ref d in &vd { // &Vec<Koyomi::Date>
+    for d in &vd { // &Vec<Koyomi::Date>
       let (w, c, s) = regular(-1, &self.col_tbl, holiday_week_name(d));
       jprint_colored!(c, -16, "{} {} {} {}\n", d, self.wn[w as usize], w, s)?;
     }
