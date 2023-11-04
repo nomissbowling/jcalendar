@@ -1,0 +1,29 @@
+[package]
+name = "jcalendar"
+version = "0.1.0" # change with html_root_url in lib.rs
+edition = "2021"
+authors = ["nomissbowling <nomissbowling@yahoo.co.jp>"]
+
+description = "Japanese Calendar for Rust"
+keywords = ["koyomi", "calendar", "date", "week", "console"]
+categories = ["text-processing", "command-line-utilities", "command-line-interface"]
+license = "MIT"
+
+documentation = "https://docs.rs/jcalendar/"
+homepage = "https://crates.io/crates/jcalendar"
+repository = "https://github.com/nomissbowling/jcalendar"
+
+readme = "README.md"
+
+#build = "build.rs"
+
+[lib]
+name = "jcalendar"
+
+[dependencies]
+koyomi = { version = "0.4" } # "0.4.0"
+chrono = { version = "0.4" } # "0.4.31"
+colored = { version = "2.0" } # "2.0.4"
+
+jput = { version = "0.1" } # "0.1.2"
+#jput = { path = "c:/prj/jput" }
