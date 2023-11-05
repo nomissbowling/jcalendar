@@ -29,8 +29,13 @@ impl Term {
     let (y, m) = (now.year(), now.month());
     Ok(Term{
       s: Date::parse(&format!("{}-{}-01", y, m)).expect(err),
-      e: Date::parse(&format!("{}-{}-{}", y, m, num_days(y, m))).expect(err)})
+      e: end_of_month(y, m)?})
   }
+}
+
+/// end of month
+pub fn end_of_month(y: i32, m: u32) -> Result<Date, Box<dyn Error>> {
+  Ok(Date::from_ymd(y, m, num_days(y, m)).expect("eom"))
 }
 
 /// holiday week name
@@ -92,16 +97,17 @@ impl Cal {
   /// show_mat
   pub fn show_mat(&self, term: Term, cs: i32, fm: bool)
     -> Result<(), Box<dyn Error>> {
+    let (y, m) = (term.s.year(), term.s.month());
+    let mut eom = end_of_month(y, m)?;
     let vd = Calendar::new(term.s, term.e).expect("error Calendar").make();
     let eot = if let Some(e) = vd.last() { e } else { &vd[0] }; // end of term
-    let mut eom = eot.clone(); // end of month (set later when first)
     let mut first = true;
     for d in &vd { // &Vec<Koyomi::Date>
       let (w, c, s) = regular(cs - 3, &self.col_tbl, holiday_week_name(d));
       if first {
         first = false;
         let (y, m) = (d.year(), d.month());
-        eom = Date::from_ymd(y, m, num_days(y, m)).expect("eom");
+        eom = end_of_month(y, m)?;
         jprint_colored!(self.cols[0], 7, "{}-{:02}\n", y, m)?;
         for &n in &self.wn { jputc_colored(n, -cs, self.col_tbl[&n])?; }
         jprint!(0, "\n")?;

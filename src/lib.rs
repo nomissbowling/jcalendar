@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/jcalendar/0.1.1")]
+#![doc(html_root_url = "https://docs.rs/jcalendar/0.1.2")]
 //! Japanese Calendar for Rust
 //!
 
